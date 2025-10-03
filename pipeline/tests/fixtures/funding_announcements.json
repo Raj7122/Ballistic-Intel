@@ -1,0 +1,63 @@
+[
+  {
+    "article_url": "https://techcrunch.com/crowdstrike-series-e",
+    "article_text": "CrowdStrike Holdings, the endpoint security startup based in Austin, Texas, announced today a massive $200 million Series E funding round. The round was led by Accel Partners, with participation from CapitalG (Google's growth fund) and Warburg Pincus. The company, which provides cloud-native endpoint protection and threat intelligence, plans to use the funds to expand its Falcon platform globally and accelerate R&D in AI-powered threat detection. CrowdStrike has now raised over $480 million in total funding since its founding in 2011.",
+    "ground_truth": {
+      "company": "CrowdStrike Holdings",
+      "amount": "$200M",
+      "stage": "Series E",
+      "lead_investor": "Accel Partners",
+      "other_investors": ["CapitalG", "Warburg Pincus"],
+      "sector": "Endpoint Security"
+    }
+  },
+  {
+    "article_url": "https://darkreading.com/wiz-series-b",
+    "article_text": "Cloud security startup Wiz closed a $100 million Series B round yesterday, just 18 months after emerging from stealth. The round was led by Insight Partners and included investments from Cyberstarts and Greenoaks Capital. Wiz, which specializes in cloud infrastructure security posture management (CSPM), has experienced explosive growth with over 1,000 enterprise customers including major Fortune 500 companies. The Tel Aviv and New York-based company will use the funding to expand its product capabilities across AWS, Azure, and Google Cloud Platform.",
+    "ground_truth": {
+      "company": "Wiz",
+      "amount": "$100M",
+      "stage": "Series B",
+      "lead_investor": "Insight Partners",
+      "other_investors": ["Cyberstarts", "Greenoaks Capital"],
+      "sector": "Cloud Security"
+    }
+  },
+  {
+    "article_url": "https://securityweek.com/snyk-series-d",
+    "article_text": "Developer security platform Snyk announced a $175 million Series D funding round today, bringing its valuation to $2.6 billion. The round was led by Addition (formerly Google Ventures) with participation from existing investors Accel, Boldstart Ventures, and Canaan Partners. Boston-based Snyk has carved out a strong position in the DevSecOps space, helping developers find and fix vulnerabilities in open source dependencies, containers, and infrastructure as code. The company has tripled its customer base year-over-year and now counts over 1,200 enterprise customers.",
+    "ground_truth": {
+      "company": "Snyk",
+      "amount": "$175M",
+      "stage": "Series D",
+      "lead_investor": "Addition",
+      "other_investors": ["Accel", "Boldstart Ventures", "Canaan Partners"],
+      "sector": "DevSecOps"
+    }
+  },
+  {
+    "article_url": "https://venturebeat.com/tanium-series-f",
+    "article_text": "Endpoint management and security company Tanium secured $150 million in Series F funding led by Salesforce Ventures, with TPG Growth and Andreessen Horowitz also participating. The Emeryville, California-based company, which provides real-time endpoint visibility and control for large enterprises, has now raised over $900 million in total funding. Tanium's platform is used by major government agencies and Fortune 100 companies to manage and secure millions of endpoints globally. The company plans to invest heavily in its XEM (eXtended Endpoint Management) platform and expand internationally.",
+    "ground_truth": {
+      "company": "Tanium",
+      "amount": "$150M",
+      "stage": "Series F",
+      "lead_investor": "Salesforce Ventures",
+      "other_investors": ["TPG Growth", "Andreessen Horowitz"],
+      "sector": "Endpoint Management"
+    }
+  },
+  {
+    "article_url": "https://thecyberwire.com/lacework-series-c",
+    "article_text": "Cloud security startup Lacework announced a $34 million Series C round led by Sutter Hill Ventures. The round included participation from Liberty Global Ventures and existing investors including Hummer Winblad Venture Partners. San Jose-based Lacework provides automated cloud security and compliance monitoring across AWS, Azure, and GCP environments. The company has seen strong adoption in the financial services and healthcare sectors, where cloud compliance is critical. Lacework will use the funding to expand its sales team and enhance its anomaly detection capabilities using machine learning.",
+    "ground_truth": {
+      "company": "Lacework",
+      "amount": "$34M",
+      "stage": "Series C",
+      "lead_investor": "Sutter Hill Ventures",
+      "other_investors": ["Liberty Global Ventures", "Hummer Winblad Venture Partners"],
+      "sector": "Cloud Security"
+    }
+  }
+]
+
