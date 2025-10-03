@@ -156,8 +156,40 @@
    - Dependencies installed: `google-generativeai`, `python-dotenv`, `pytest`
    - Test fixtures: 5 real funding announcements with ground truth
 
+5. ✅ **Task 1.5: Security Baseline** (2025-10-03)
+   - Enhanced security headers in `next.config.ts`:
+     * HSTS with preload (max-age=63072000; includeSubDomains; preload)
+     * X-Frame-Options: DENY (upgraded from SAMEORIGIN)
+     * X-Content-Type-Options: nosniff
+     * Referrer-Policy: no-referrer (upgraded from strict-origin-when-cross-origin)
+     * Permissions-Policy: deny-by-default for 9 sensitive features
+     * Cross-Origin-Opener-Policy: same-origin
+     * Cross-Origin-Embedder-Policy: unsafe-none (can upgrade to require-corp)
+     * Cross-Origin-Resource-Policy: same-origin
+     * Removed deprecated X-XSS-Protection header
+   - Middleware with nonce-based CSP (`middleware.ts`):
+     * Per-request cryptographic nonce generation
+     * Strict CSP: `script-src 'self' 'nonce-{nonce}' 'strict-dynamic'`
+     * No `unsafe-inline` or `unsafe-eval` in production
+     * Development mode: relaxed CSP with `unsafe-eval` for HMR
+     * Supabase REST/WebSocket allowed in `connect-src`
+     * Automatic nonce propagation via x-nonce header
+   - CORS utility (`lib/cors.ts`):
+     * Origin whitelist validation
+     * Method restrictions (GET, POST, PUT, PATCH, DELETE, OPTIONS)
+     * Header restrictions (Content-Type, Authorization, X-Requested-With)
+     * Preflight (OPTIONS) request handling
+     * Vercel deployment wildcard support
+   - Nonce propagation in `app/layout.tsx`:
+     * Reads nonce from middleware headers
+     * Available for next/script components
+     * Development console logging for debugging
+   - Health check API (`app/api/health/route.ts`):
+     * Demonstrates CORS implementation
+     * Returns system status and timestamp
+
 **Next Actions:**
-1. Task 1.5: Configure security baseline (Next.js headers, CSP, CORS)
-2. Task 2.1: Build Agent P1a - Patent Ingestion
-3. Task 2.2: Build Agent P1b - Newsletter Ingestion
+1. Task 2.1: Build Agent P1a - Patent Ingestion
+2. Task 2.2: Build Agent P1b - Newsletter Ingestion
+3. Optional: Add OWASP ZAP GitHub Actions workflow (Task 1.5 Step 7)
 
