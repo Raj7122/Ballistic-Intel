@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Cybersecurity News</title>
+    <link>https://example.com</link>
+    <description>Latest cybersecurity news</description>
+    
+    <item>
+      <title>Wiz Secures $100M Series B Led by Insight Partners</title>
+      <link>https://example.com/wiz-100m-series-b</link>
+      <description>Cloud security startup Wiz announced today it has raised $100 million in Series B funding led by Insight Partners, with participation from Cyberstarts.</description>
+      <pubDate>Wed, 03 Oct 2024 10:00:00 GMT</pubDate>
+      <category>Funding</category>
+      <category>Cloud Security</category>
+    </item>
+    
+    <item>
+      <title>New Zero-Day Vulnerability Discovered in Linux Kernel</title>
+      <link>https://example.com/linux-zero-day</link>
+      <description>Security researchers have identified a critical zero-day vulnerability affecting the Linux kernel versions 5.x and 6.x.</description>
+      <pubDate>Wed, 02 Oct 2024 14:30:00 GMT</pubDate>
+      <category>Vulnerability</category>
+    </item>
+    
+    <item>
+      <title>CrowdStrike Completes $200M Series E Round</title>
+      <link>https://example.com/crowdstrike-200m</link>
+      <description>Endpoint security leader CrowdStrike has closed a $200 million Series E round co-led by Accel and CapitalG, bringing its valuation to $3 billion.</description>
+      <pubDate>Tue, 01 Oct 2024 09:00:00 GMT</pubDate>
+      <category>Funding</category>
+    </item>
+    
+  </channel>
+</rss>
+
