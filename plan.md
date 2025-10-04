@@ -379,10 +379,25 @@ Dashboard Home
   - **Result:** ✅ 14 unit tests passing, 100% company precision (exceeds 85%), 66.67% sector accuracy (heuristic; LLM ≥80%)
   - **Heuristic Fallback:** Pattern-based company extraction, CPC/keyword sector mapping, novelty from announcement/innovation keywords
 
-- [ ] **Task 2.5: Agent P4 - Entity Resolution**
+- [x] **Task 2.5: Agent P4 - Entity Resolution**
   - **Description:** Deduplicate company names (fuzzy matching + normalization)
   - **Success Criteria:** "Palo Alto Networks" = "Palo Alto" = "PAN Inc"
   - **Testing Strategy:** Unit tests with known duplicates
+
+  - **Implementation:**
+    - ResolvedEntity and AliasLink models (models/entities.py)
+    - P4Config for thresholds (0.88/0.70), weights, legal suffixes (config/p4_config.py)
+    - NameNormalizer: case, punctuation, legal suffixes, stopwords (logic/name_normalizer.py)
+    - SimilarityCalculator: Jaccard, Levenshtein, Jaro-Winkler, acronym (logic/similarity.py)
+    - BlockingStrategy: first token, prefix, signature keys (logic/blocking.py)
+    - Clusterer: Union-Find, canonical selection (logic/clusterer.py)
+    - EntityResolver: orchestration service (services/entity_resolver.py)
+    - EntityResolutionAgent: interface (agents/p4_entity_resolution.py)
+  - **Artifacts:**
+    - Tests and fixtures: tests/test_p4_entity_resolution.py, tests/fixtures/entity_resolution/labeled_pairs.json (20 positive, 10 negative, 4 clusters)
+  - **Result:** ✅ 21 tests passing, 100% precision (0 false positives), 75% recall, F1: 85.71%
+  - **Normalization:** Removes Inc/Corp/LLC/Ltd, punctuation, handles &/slash, token dedup, conservative stopwords
+  - **Similarity:** Composite weighted (Jaccard 35%, Edit 25%, Jaro 15%, Acronym 25%)
 
 - [ ] **Task 2.6: Agent P5 - Database Ingestion**
   - **Description:** Insert signals into Supabase, update company metrics, refresh views
