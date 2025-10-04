@@ -189,9 +189,9 @@
      * Returns system status and timestamp
 
 **Next Actions:**
-1. Task 2.3: Build Agent P2 - Universal Relevance Filter (uses Gemini)
-2. Task 2.4: Build Agent P3 - Extraction & Classification (uses FundingExtractor)
-3. Task 2.7: Orchestrator integration will include live BigQuery/RSS tests
+1. Task 2.4: Build Agent P3 - Extraction & Classification (entity extraction, sector classification)
+2. Task 2.5: Build Agent P4 - Entity Resolution (company name deduplication)
+3. Task 2.7: Orchestrator integration will include live BigQuery/RSS/Gemini tests
 
 ---
 
@@ -228,5 +228,26 @@
 - Created configuration for 4 RSS feeds: TheCyberWire, DarkReading, SecurityWeek, TechCrunch Security (`config/p1b_config.py`)  
 - Added dependencies: feedparser, beautifulsoup4, lxml  
 **Prevention Strategy:** Mock RSS feeds in tests to avoid network calls and rate limiting during development; defer live RSS tests to orchestrator.  
-**Tests Added:** 8 unit tests covering NewsArticle model, FundingDetector precision/recall, FeedParser filtering, and Agent end-to-end (all passing).  
+**Tests Added:** 8 unit tests covering NewsArticle model, FundingDetector precision/recall, FeedParser filtering, and Agent end-to-end (all passing).
+
+---
+
+**Timestamp:** `2025-10-04 [Agent P2 Implementation]`  
+**Category:** `UNIT`  
+**Status:** `SOLVED`  
+**Error Message:** `N/A - Development Completion Entry`  
+**Context:** Implemented Agent P2 (Universal Relevance Filter) with Gemini LLM and heuristic fallback  
+**Root Cause Analysis:** N/A  
+**Solution Implemented:**  
+- Added `RelevanceResult` model with score clamping, category normalization, serialization (`models/relevance.py`)  
+- Implemented `RelevanceHeuristics` fallback with CPC code mapping and multi-signal keyword detection (`logic/relevance_heuristics.py`)  
+- Created structured Gemini prompt with 4 examples (relevant/not relevant for patents/news) (`prompts/relevance_prompt.md`)  
+- Implemented `RelevanceClassifier` service: LLM with JSON parsing, validation, caching, fallback (`services/relevance_classifier.py`)  
+- Implemented `RelevanceFilterAgent` orchestrator with concurrent processing (3 workers, 15 RPM) (`agents/p2_relevance_filter.py`)  
+- Created P2Config for thresholds (0.6), LLM settings, concurrency, caching (1h TTL) (`config/p2_config.py`)  
+- Defined 12 cybersecurity categories: cloud, network, endpoint, identity, vulnerability, malware, data, governance, cryptography, application, iot, unknown  
+- Created labeled test dataset: 5 patents + 10 news articles (15 total) with expected labels and categories  
+**Prevention Strategy:** Mock Gemini responses in tests to avoid API quota consumption; defer live LLM tests to orchestrator; heuristic fallback ensures resilience.  
+**Tests Added:** 16 unit tests covering RelevanceResult, category normalization, heuristics, LLM success/failure/fallback, caching, agent orchestration, precision validation (all passing).  
+**Performance Metrics:** 100% precision on labeled data (exceeds 70% requirement); 0 false positives.  
 
