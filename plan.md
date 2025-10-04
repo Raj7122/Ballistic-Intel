@@ -312,6 +312,16 @@ Dashboard Home
   - **Description:** Fetch cybersecurity patents from BigQuery, parse metadata
   - **Success Criteria:** Retrieve 50+ patents from last 7 days, extract title/abstract/CPC codes
   - **Testing Strategy:** Unit tests (pytest) - verify data structure, mock BigQuery
+  - **Implementation:**
+    - Patent model with parsing/validation (`pipeline/models/patent.py`)
+    - BigQuery client with retries and cost tracking (`pipeline/clients/bigquery_client.py`)
+    - Optimized query builder with CPC/date filters (`pipeline/agents/query_builder.py`)
+    - Ingestion agent with 7-day window and 30-day fallback (`pipeline/agents/p1a_patent_ingestion.py`)
+  - **Artifacts:**
+    - Tests and fixtures: `pipeline/tests/test_p1a_patent_ingestion.py`, `pipeline/tests/fixtures/patents.json`
+    - Updated dependencies: `tenacity`, `pytest-mock` in `pipeline/requirements.txt`
+  - **Result (current):** ✅ 6 unit tests passing (parsing, query builder, fallback, error handling)
+  - **Notes:** Integration against live BigQuery deferred to Task 2.7 (Orchestrator) to minimize quota (S.A.F.E: Strategic).
 
 - [ ] **Task 2.2: Agent P1b - Newsletter Ingestion**
   - **Description:** Parse RSS feeds (TheCyberwire, DarkReading, etc.), extract articles
