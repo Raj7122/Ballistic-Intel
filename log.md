@@ -235,8 +235,49 @@
 4. **Sector Normalization:** ExtractionResult auto-normalizes sector to P2 categories (e.g., "identity" not "identity_management")
 
 **Next Actions:**
-1. Task 2.7: Build Orchestrator - coordinate all agents (P1a, P1b, P2, P3, P4) with StorageWriter; run live integration tests (BigQuery → Supabase)
-2. Task 3: Build Frontend - dashboard, tables, filters, and real-time updates using Supabase client
+1. Task 3: Build Frontend - dashboard, tables, filters, and real-time updates using Supabase client
+
+---
+**Timestamp:** `2025-10-04 16:20:00`  
+**Category:** `BUILD`  
+**Status:** `SOLVED`  
+**Task:** `Task 2.7 - Orchestrator Pipeline (Phase 1)`  
+**Context:** Build orchestrator to coordinate Agents P1a→P1b→P2→P3→P4 with concurrency, DLQ, and idempotent storage  
+**Implementation Details:**
+- Added orchestrator configuration with run modes (incremental/backfill/dry_run), lookback, concurrency, DLQ, logging
+- Implemented RunContext (correlation_id, stats, errors, duration)
+- Built DAG engine (dependency validation, cycle detection, topological order)
+- Implemented Orchestrator Runner with bounded concurrency (P2=4, P3=4) and StorageWriter persistence
+- Added DLQ utilities (write/list/read failed items)
+- Created CLI entrypoint (`python -m pipeline`)
+- Wrote unit tests: 16 tests passing (DAG, config, DLQ)
+- Documentation: `pipeline/docs/ORCHESTRATOR.md`
+
+**Artifacts:**
+- `pipeline/config/orchestrator_config.py`
+- `pipeline/orchestrator/{context.py, dag.py, errors.py, runner.py, __init__.py}`
+- `pipeline/__main__.py`
+- `pipeline/tests/test_orchestrator_unit.py`
+- `pipeline/docs/ORCHESTRATOR.md`
+
+**Testing Results:**
+- ✅ 16/16 unit tests passing
+- ✅ Dry-run CLI executes and logs summary
+- 🔜 Live integration tests planned with `LIVE_INTEGRATION=true`
+
+**Key Features:**
+- DAG-based execution with dependency management
+- Bounded concurrency for LLM-bound steps (respects Gemini RPM)
+- DLQ for persistent failures; continue-on-error semantics
+- Idempotent persistence via StorageWriter
+
+**Lessons Learned:**
+1. Module-level configs cache env vars; tests reload module to apply patched envs.
+2. DLQ filenames need uniqueness; test ensures timestamp uniqueness with slight delay.
+
+**Next Actions:**
+1. Run live integration test with minimal window (LOOKBACK_DAYS=2, LIVE_INTEGRATION=true)
+2. Begin Phase 3 (Frontend) scaffolding and Supabase reads
 
 ---
 
