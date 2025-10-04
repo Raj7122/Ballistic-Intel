@@ -189,9 +189,9 @@
      * Returns system status and timestamp
 
 **Next Actions:**
-1. Task 2.5: Build Agent P4 - Entity Resolution (company name fuzzy matching and deduplication)
-2. Task 2.6: Build Storage Layer - Supabase integration with schema and UPSERTs
-3. Task 2.7: Orchestrator integration will include live BigQuery/RSS/Gemini/Supabase tests
+1. Task 2.6: Build Storage Layer - Supabase integration with schema, UPSERTs, and connection pooling
+2. Task 2.7: Build Orchestrator - coordinate all agents (P1a, P1b, P2, P3, P4) with live integration tests
+3. Task 3: Build Frontend - dashboard, tables, filters, and real-time updates
 
 ---
 
@@ -270,5 +270,28 @@
 - Created labeled test dataset: 5 patents + 10 news articles (15 total) with expected companies, sectors, and novelty bands  
 **Prevention Strategy:** Mock Gemini responses in tests; defer live LLM tests to orchestrator; heuristic fallback with company normalization (legal suffix removal).  
 **Tests Added:** 14 unit tests covering ExtractionResult, deduplication, limits, heuristics (patent/news), LLM success/failure, caching, agent, metrics validation (all passing).  
-**Performance Metrics:** 100% company extraction precision (exceeds 85% requirement); 66.67% sector accuracy for heuristics (LLM achieves ≥80%).  
+**Performance Metrics:** 100% company extraction precision (exceeds 85% requirement); 66.67% sector accuracy for heuristics (LLM achieves ≥80%).
+
+---
+
+**Timestamp:** `2025-10-04 [Agent P4 Implementation]`  
+**Category:** `UNIT`  
+**Status:** `SOLVED`  
+**Error Message:** `N/A - Development Completion Entry`  
+**Context:** Implemented Agent P4 (Entity Resolution) with fuzzy matching and clustering for company name deduplication  
+**Root Cause Analysis:** N/A  
+**Solution Implemented:**  
+- Added `ResolvedEntity` and `AliasLink` models with stable hash-based IDs, deduplication, confidence tracking (`models/entities.py`)  
+- Implemented `NameNormalizer`: Unicode NFC, lowercase, legal suffix removal (Inc/Corp/LLC/Ltd/etc), punctuation cleaning, ampersand→and, token dedup, conservative stopword removal (`logic/name_normalizer.py`)  
+- Implemented `SimilarityCalculator`: composite weighted score - Token Jaccard (35%), Levenshtein ratio (25%), Jaro-Winkler (15%), Acronym matching (25%) (`logic/similarity.py`)  
+- Implemented `BlockingStrategy`: generates blocking keys (first token, prefix, signature, length) for O(n log n) candidate generation (`logic/blocking.py`)  
+- Implemented `Clusterer`: Union-Find for clustering, canonical selection (longest name), max cluster size guardrail (20) (`logic/clusterer.py`)  
+- Implemented `EntityResolver` service: orchestrates normalization → blocking → pairwise similarity → clustering → canonical selection (`services/entity_resolver.py`)  
+- Implemented `EntityResolutionAgent`: simple interface with statistics (`agents/p4_entity_resolution.py`)  
+- Created P4Config: thresholds (hard 0.88, soft 0.70), similarity weights, legal suffixes (international), acronym expansions seed dictionary (`config/p4_config.py`)  
+- Created labeled test dataset: 20 positive pairs, 10 negative pairs, 4 multi-alias clusters  
+- Added dependencies: python-Levenshtein, jellyfish, rapidfuzz  
+**Prevention Strategy:** Deterministic entity IDs via SHA-256; blocking to avoid O(n²); max cluster size to prevent runaway merges; conservative normalization to minimize false positives.  
+**Tests Added:** 21 unit tests covering normalization, similarity metrics, blocking, Union-Find, clustering, resolver, agent, pairwise precision/recall (all passing).  
+**Performance Metrics:** 100% precision (0 false positives, exceeds 95% target); 75% recall (15/20 TP; some acronyms need expansion dictionary); F1 Score: 85.71%.  
 
