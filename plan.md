@@ -323,10 +323,24 @@ Dashboard Home
   - **Result (current):** ✅ 6 unit tests passing (parsing, query builder, fallback, error handling)
   - **Notes:** Integration against live BigQuery deferred to Task 2.7 (Orchestrator) to minimize quota (S.A.F.E: Strategic).
 
-- [ ] **Task 2.2: Agent P1b - Newsletter Ingestion**
+- [x] **Task 2.2: Agent P1b - Newsletter Ingestion**
   - **Description:** Parse RSS feeds (TheCyberwire, DarkReading, etc.), extract articles
   - **Success Criteria:** Fetch 100+ articles from last 7 days, identify funding announcements
   - **Testing Strategy:** Unit tests - mock feedparser, validate article schema
+
+  - **Implementation:**
+    - NewsArticle model with stable ID and serialization (models/news_article.py)
+    - RSSClient with retry logic and rate limiting (clients/rss_client.py)
+    - FeedParser with date filtering (parsers/feed_parser.py)
+    - ArticleFetcher for HTML extraction via BeautifulSoup (clients/article_fetcher.py)
+    - FundingDetector with multi-signal heuristics (logic/funding_detector.py)
+    - NewsletterIngestionAgent orchestrator (agents/p1b_newsletter_ingestion.py)
+    - Configuration for 4 RSS feeds (config/p1b_config.py)
+  - **Artifacts:**
+    - Tests and fixtures: tests/test_p1b_newsletter_ingestion.py, tests/fixtures/rss/sample_feed.xml
+    - Dependencies: feedparser, beautifulsoup4, lxml added to requirements.txt
+  - **Result:** ✅ 8 unit tests passing (model, detector, parser, agent end-to-end)
+  - **Funding Detection:** Requires ≥2 signals (action + money/stage/investor/valuation) for high precision
 
 - [ ] **Task 2.3: Agent P2 - Universal Relevance Filter**
   - **Description:** Use Gemini to filter cybersecurity-relevant signals
