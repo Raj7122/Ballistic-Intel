@@ -21,6 +21,8 @@ grpcio-status==1.71.2
 httplib2==0.31.0
 idna==3.10
 iniconfig==2.1.0
+jellyfish==1.2.0
+Levenshtein==0.27.1
 lxml==6.0.2
 packaging==25.0
 pluggy==1.6.0
@@ -37,6 +39,8 @@ pytest-cov==7.0.0
 pytest-mock==3.15.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
+python-Levenshtein==0.27.1
+RapidFuzz==3.14.1
 requests==2.32.5
 rsa==4.9.1
 sgmllib3k==1.0.0
