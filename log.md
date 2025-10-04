@@ -189,9 +189,9 @@
      * Returns system status and timestamp
 
 **Next Actions:**
-1. Task 2.2: Build Agent P1b - Newsletter Ingestion (proceed next per S.A.F.E strategy)
-2. Task 2.7: Orchestrator integration will include P1a live BigQuery test to conserve quota
-3. Optional: Add OWASP ZAP GitHub Actions workflow (Task 1.5 Step 7)
+1. Task 2.3: Build Agent P2 - Universal Relevance Filter (uses Gemini)
+2. Task 2.4: Build Agent P3 - Extraction & Classification (uses FundingExtractor)
+3. Task 2.7: Orchestrator integration will include live BigQuery/RSS tests
 
 ---
 
@@ -208,5 +208,25 @@
 - Implemented `PatentIngestionAgent` with 7-day window and 30-day fallback (`agents/p1a_patent_ingestion.py`)  
 - Added tests and fixtures (`tests/test_p1a_patent_ingestion.py`, `tests/fixtures/patents.json`)  
 **Prevention Strategy:** Defer live-integration tests to orchestrator to minimize quota; unit tests rely on mocks and fixtures.  
-**Tests Added:** 6 unit tests covering parsing, query generation, fallback behavior, and error handling (all passing).  
+**Tests Added:** 6 unit tests covering parsing, query generation, fallback behavior, and error handling (all passing).
+
+---
+
+**Timestamp:** `2025-10-04 [Agent P1b Implementation]`  
+**Category:** `UNIT`  
+**Status:** `SOLVED`  
+**Error Message:** `N/A - Development Completion Entry`  
+**Context:** Implemented Agent P1b (Newsletter Ingestion) with RSS parsing, HTML extraction, and funding detection  
+**Root Cause Analysis:** N/A  
+**Solution Implemented:**  
+- Added `NewsArticle` model with stable ID generation (`models/news_article.py`)  
+- Implemented `RSSClient` with retry logic and rate limiting (`clients/rss_client.py`)  
+- Implemented `FeedParser` with date filtering and deduplication (`parsers/feed_parser.py`)  
+- Implemented `ArticleFetcher` for HTML content extraction via BeautifulSoup (`clients/article_fetcher.py`)  
+- Implemented `FundingDetector` with multi-signal heuristics (≥2 signals required) (`logic/funding_detector.py`)  
+- Implemented `NewsletterIngestionAgent` orchestrating all components (`agents/p1b_newsletter_ingestion.py`)  
+- Created configuration for 4 RSS feeds: TheCyberWire, DarkReading, SecurityWeek, TechCrunch Security (`config/p1b_config.py`)  
+- Added dependencies: feedparser, beautifulsoup4, lxml  
+**Prevention Strategy:** Mock RSS feeds in tests to avoid network calls and rate limiting during development; defer live RSS tests to orchestrator.  
+**Tests Added:** 8 unit tests covering NewsArticle model, FundingDetector precision/recall, FeedParser filtering, and Agent end-to-end (all passing).  
 
