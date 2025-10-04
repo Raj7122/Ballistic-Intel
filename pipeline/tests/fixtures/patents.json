@@ -1,0 +1,28 @@
+[
+  {
+    "publication_number": "US-20240123456-A1",
+    "title": "System and method for zero-trust network security",
+    "abstract": "A cybersecurity system implementing zero-trust architecture with continuous verification and least-privilege access for enterprise networks.",
+    "filing_date": 20240101,
+    "publication_date": 20240615,
+    "country_code": "US",
+    "kind_code": "A1",
+    "assignees": ["Palo Alto Networks Inc"],
+    "inventors": ["John Smith", "Jane Doe"],
+    "cpc_codes": ["H04L9/00", "G06F21/62"]
+  },
+  {
+    "publication_number": "US-20240111111-A1",
+    "title": "Secure wireless channel establishment for IoT devices",
+    "abstract": "Techniques for establishing secure communication channels among resource-constrained IoT devices using lightweight cryptography.",
+    "filing_date": 20240110,
+    "publication_date": 20240620,
+    "country_code": "US",
+    "kind_code": "A1",
+    "assignees": ["Acme IoT Corp"],
+    "inventors": ["Alice Chen"],
+    "cpc_codes": ["H04W12/06"]
+  }
+]
+
+
