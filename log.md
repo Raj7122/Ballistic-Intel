@@ -188,10 +188,55 @@
      * Demonstrates CORS implementation
      * Returns system status and timestamp
 
+---
+
+**Timestamp:** `2025-01-04 15:30:00`  
+**Category:** `BUILD`  
+**Status:** `SOLVED`  
+**Task:** `Task 2.6 - Storage Layer (Supabase Integration)`  
+**Context:** Build repository pattern for persisting all agent outputs to Supabase PostgreSQL  
+**Implementation Details:**
+- Extended database schema with 6 raw pipeline tables
+- Built Supabase client with singleton pattern, retry logic (tenacity), exponential backoff
+- Implemented 5 repositories mapping domain models to DB dicts with idempotent upserts
+- Created StorageWriter service for orchestrating all persistence operations
+- Installed supabase-py v2.21.1 and dependencies
+- Wrote 12 unit tests with mocked Supabase client (all passing)
+
+**Artifacts:**
+- `database/schema.sql` (Section 1: RAW PIPELINE TABLES - patents, news_articles, relevance_results, extraction_results, entities, entity_aliases)
+- `pipeline/config/storage_config.py` (env-based configuration)
+- `pipeline/clients/supabase_client.py` (singleton with retry logic)
+- `pipeline/repos/` (5 repositories: patents, news, relevance, extraction, entities)
+- `pipeline/services/storage_writer.py` (high-level orchestration)
+- `pipeline/tests/test_storage_layer.py` (12 tests, 100% passing)
+- `pipeline/docs/STORAGE.md` (comprehensive usage guide)
+
+**Testing Results:**
+- ✅ 12/12 unit tests passing
+- ✅ Patent model → DB dict mapping
+- ✅ News article ID generation (SHA-256 hash)
+- ✅ Relevance/extraction composite conflict keys
+- ✅ Entity/alias FK relationship
+- ✅ StorageWriter orchestration
+- ✅ Idempotency validated (second upsert = no duplicates)
+
+**Key Features:**
+- **Idempotent Upserts:** ON CONFLICT keys prevent duplicates
+- **Batching:** Default 500 rows/batch, adaptive on 413/429 errors
+- **Retry Logic:** 3 attempts, exponential backoff (0.5s → 10s max)
+- **Security:** Service role key bypasses RLS; prepared RLS policies for frontend
+- **Performance:** GIN indexes on arrays, BTREE on dates/categories
+
+**Lessons Learned:**
+1. **Composite Conflict Keys:** For relevance/extraction results, used `(item_id, source_type, model, model_version, timestamp)` to support multiple model runs
+2. **Foreign Key Order:** For entities/aliases, must upsert entities before aliases (FK constraint)
+3. **Datetime Deprecation:** Replaced `datetime.utcnow()` with `datetime.now(UTC)` in tests to avoid warnings
+4. **Sector Normalization:** ExtractionResult auto-normalizes sector to P2 categories (e.g., "identity" not "identity_management")
+
 **Next Actions:**
-1. Task 2.6: Build Storage Layer - Supabase integration with schema, UPSERTs, and connection pooling
-2. Task 2.7: Build Orchestrator - coordinate all agents (P1a, P1b, P2, P3, P4) with live integration tests
-3. Task 3: Build Frontend - dashboard, tables, filters, and real-time updates
+1. Task 2.7: Build Orchestrator - coordinate all agents (P1a, P1b, P2, P3, P4) with StorageWriter; run live integration tests (BigQuery → Supabase)
+2. Task 3: Build Frontend - dashboard, tables, filters, and real-time updates using Supabase client
 
 ---
 

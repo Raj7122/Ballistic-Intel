@@ -7,7 +7,108 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto; -- for gen_random_uuid()
 
 -- ============================================
--- SECTION 1: TABLES (9 tables)
+-- SECTION 1: RAW PIPELINE TABLES (Agent outputs)
+-- ============================================
+
+-- 1.A Patents (raw from P1a)
+CREATE TABLE IF NOT EXISTS patents (
+  publication_number TEXT PRIMARY KEY,
+  title TEXT,
+  abstract TEXT,
+  filing_date DATE NOT NULL,
+  publication_date DATE,
+  assignees TEXT[] DEFAULT '{}',
+  inventors TEXT[] DEFAULT '{}',
+  cpc_codes TEXT[] DEFAULT '{}',
+  country TEXT NOT NULL DEFAULT 'US',
+  kind_code TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_patents_filing_date ON patents(filing_date DESC);
+CREATE INDEX IF NOT EXISTS idx_patents_publication_date ON patents(publication_date DESC);
+CREATE INDEX IF NOT EXISTS idx_patents_cpc_codes ON patents USING GIN(cpc_codes);
+
+-- 1.B News Articles (raw from P1b)
+CREATE TABLE IF NOT EXISTS news_articles (
+  id VARCHAR(16) PRIMARY KEY,
+  source TEXT NOT NULL,
+  title TEXT NOT NULL,
+  link TEXT UNIQUE NOT NULL,
+  published_at TIMESTAMPTZ NOT NULL,
+  summary TEXT,
+  categories TEXT[] DEFAULT '{}',
+  content_text TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_news_articles_link ON news_articles(link);
+CREATE INDEX IF NOT EXISTS idx_news_articles_published_at ON news_articles(published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_news_articles_categories ON news_articles USING GIN(categories);
+
+-- 1.C Relevance Results (from P2)
+CREATE TABLE IF NOT EXISTS relevance_results (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  item_id TEXT NOT NULL,
+  source_type TEXT NOT NULL CHECK (source_type IN ('patent', 'news')),
+  is_relevant BOOLEAN NOT NULL,
+  score FLOAT CHECK (score BETWEEN 0 AND 1),
+  category TEXT,
+  reasons TEXT[] DEFAULT '{}',
+  model TEXT NOT NULL,
+  model_version TEXT,
+  timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(item_id, source_type, model, model_version, timestamp)
+);
+
+CREATE INDEX IF NOT EXISTS idx_relevance_item_source ON relevance_results(item_id, source_type);
+CREATE INDEX IF NOT EXISTS idx_relevance_category ON relevance_results(category);
+CREATE INDEX IF NOT EXISTS idx_relevance_is_relevant ON relevance_results(is_relevant) WHERE is_relevant = TRUE;
+
+-- 1.D Extraction Results (from P3)
+CREATE TABLE IF NOT EXISTS extraction_results (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  item_id TEXT NOT NULL,
+  source_type TEXT NOT NULL CHECK (source_type IN ('patent', 'news')),
+  company_names TEXT[] DEFAULT '{}',
+  sector TEXT,
+  novelty_score FLOAT CHECK (novelty_score BETWEEN 0 AND 1),
+  tech_keywords TEXT[] DEFAULT '{}',
+  rationale TEXT[] DEFAULT '{}',
+  model TEXT NOT NULL,
+  model_version TEXT,
+  timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(item_id, source_type, model, model_version, timestamp)
+);
+
+CREATE INDEX IF NOT EXISTS idx_extraction_item_source ON extraction_results(item_id, source_type);
+CREATE INDEX IF NOT EXISTS idx_extraction_company_names ON extraction_results USING GIN(company_names);
+CREATE INDEX IF NOT EXISTS idx_extraction_tech_keywords ON extraction_results USING GIN(tech_keywords);
+CREATE INDEX IF NOT EXISTS idx_extraction_sector ON extraction_results(sector);
+
+-- 1.E Entities (from P4)
+CREATE TABLE IF NOT EXISTS entities (
+  entity_id VARCHAR(16) PRIMARY KEY,
+  canonical_name TEXT NOT NULL,
+  sources TEXT[] DEFAULT '{}',
+  confidence FLOAT CHECK (confidence BETWEEN 0 AND 1),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_entities_canonical_name ON entities(canonical_name);
+
+-- 1.F Entity Aliases (from P4)
+CREATE TABLE IF NOT EXISTS entity_aliases (
+  raw_name TEXT PRIMARY KEY,
+  entity_id VARCHAR(16) REFERENCES entities(entity_id) ON DELETE CASCADE,
+  score FLOAT CHECK (score BETWEEN 0 AND 1),
+  rules_applied TEXT[] DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_entity_aliases_entity_id ON entity_aliases(entity_id);
+
+-- ============================================
+-- SECTION 2: TABLES (9 tables - MVP normalized schema)
 -- ============================================
 
 -- 1.1 Intelligence Sources (Registry)
